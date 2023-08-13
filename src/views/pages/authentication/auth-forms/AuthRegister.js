@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'store';
-import { Link, useNavigate } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -12,8 +11,6 @@ import {
     FormControlLabel,
     FormHelperText,
     Grid,
-    IconButton,
-    InputAdornment,
     InputLabel,
     OutlinedInput,
     TextField,
@@ -24,41 +21,26 @@ import {
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-
+import { MenuItem, Select } from '@mui/material';
 // project imports
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 import { strengthColor, strengthIndicatorNumFunc } from 'utils/password-strength';
-import { openSnackbar } from 'store/slices/snackbar';
-
-// assets
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
 const JWTRegister = ({ ...others }) => {
+    const [isSuccess, setIsSuccess] = useState(false);
     const theme = useTheme();
-    const navigate = useNavigate();
     const scriptedRef = useScriptRef();
-    const dispatch = useDispatch();
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const [showPassword, setShowPassword] = React.useState(false);
     const [checked, setChecked] = React.useState(true);
 
     const [strength, setStrength] = React.useState(0);
     const [level, setLevel] = React.useState();
     const { register } = useAuth();
-
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
 
     const changePassword = (value) => {
         const temp = strengthIndicatorNumFunc(value);
@@ -69,7 +51,11 @@ const JWTRegister = ({ ...others }) => {
     useEffect(() => {
         changePassword('123456');
     }, []);
-
+    const profileOptions = [
+        { value: 1, label: 'Adminstrateur' },
+        { value: 2, label: 'Validateur' }
+        // Add more profile options as needed
+    ];
     return (
         <>
             <Grid container direction="column" justifyContent="center" spacing={2}>
@@ -82,37 +68,48 @@ const JWTRegister = ({ ...others }) => {
 
             <Formik
                 initialValues={{
+                    nom: '',
+                    prenom: '',
                     email: '',
-                    password: '',
-                    firstName: '',
-                    lastName: '',
+                    description: '',
+                    profile_id: 1,
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
+                    nom: Yup.string().required('Last Name is required'),
+                    prenom: Yup.string().required('First Name is required'),
                     email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
+                    description: Yup.string().required('Description is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
-                        await register(values.email, values.password, values.firstName, values.lastName);
+                        await register(values.nom, values.prenom, values.email, values.description, values.profile_id);
                         if (scriptedRef.current) {
                             setStatus({ success: true });
                             setSubmitting(false);
-                            dispatch(
-                                openSnackbar({
-                                    open: true,
-                                    message: 'Your registration has been successfully completed.',
-                                    variant: 'alert',
-                                    alert: {
-                                        color: 'success'
-                                    },
-                                    close: false
-                                })
-                            );
 
-                            setTimeout(() => {
-                                navigate('/login', { replace: true });
-                            }, 1500);
+                            // Send POST request to the backend API
+                            if (isSuccess) {
+                                try {
+                                    const response = await axios.post('http://127.0.0.1:5000/users/register', {
+                                        nom: values.nom,
+                                        prenom: values.prenom,
+                                        email: values.email,
+                                        description: values.description,
+                                        profile_id: values.profile_id
+                                    });
+
+                                    if (response.ok) {
+                                        // Handle success
+                                        console.log('User registered successfully');
+                                    } else {
+                                        // Handle error
+                                        console.error('Failed to register user');
+                                    }
+                                } catch (error) {
+                                    console.error('Error sending request:', error);
+                                }
+                            }
                         }
                     } catch (err) {
                         console.error(err);
@@ -132,30 +129,59 @@ const JWTRegister = ({ ...others }) => {
                                     fullWidth
                                     label="First Name"
                                     margin="normal"
-                                    name="firstName"
+                                    name="prenom"
                                     type="text"
-                                    value={values.firstName}
+                                    value={values.prenom}
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     sx={{ ...theme.typography.customInput }}
                                 />
                             </Grid>
+
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
                                     label="Last Name"
                                     margin="normal"
-                                    name="lastName"
+                                    name="nom"
                                     type="text"
-                                    value={values.lastName}
+                                    value={values.nom}
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     sx={{ ...theme.typography.customInput }}
                                 />
                             </Grid>
                         </Grid>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address / Username</InputLabel>
+                        {touched.nom && errors.nom && (
+                            <FormHelperText error id="standard-weight-helper-text--register">
+                                {errors.nom}
+                            </FormHelperText>
+                        )}
+                        {touched.prenom && errors.prenom && (
+                            <FormHelperText error id="standard-weight-helper-text--register">
+                                {errors.prenom}
+                            </FormHelperText>
+                        )}
+                        <FormControl fullWidth error={Boolean(touched.description && errors.description)}>
+                            <InputLabel htmlFor="outlined-adornment-description">Description</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-description"
+                                type="text"
+                                value={values.description}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                name="description"
+                                sx={{ ...theme.typography.customInput }}
+                                label="Description"
+                            ></OutlinedInput>
+                        </FormControl>
+                        {touched.description && errors.description && (
+                            <FormHelperText error id="standard-weight-helper-text--register">
+                                {errors.description}
+                            </FormHelperText>
+                        )}
+                        <FormControl fullWidth error={Boolean(touched.email && errors.email)}>
+                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address </InputLabel>
                             <OutlinedInput
                                 id="outlined-adornment-email-register"
                                 type="email"
@@ -163,50 +189,13 @@ const JWTRegister = ({ ...others }) => {
                                 name="email"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
+                                label="Email Address"
+                                sx={{ ...theme.typography.customInput }}
                                 inputProps={{}}
                             />
                             {touched.email && errors.email && (
                                 <FormHelperText error id="standard-weight-helper-text--register">
                                     {errors.email}
-                                </FormHelperText>
-                            )}
-                        </FormControl>
-
-                        <FormControl
-                            fullWidth
-                            error={Boolean(touched.password && errors.password)}
-                            sx={{ ...theme.typography.customInput }}
-                        >
-                            <InputLabel htmlFor="outlined-adornment-password-register">Password</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-password-register"
-                                type={showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                name="password"
-                                label="Password"
-                                onBlur={handleBlur}
-                                onChange={(e) => {
-                                    handleChange(e);
-                                    changePassword(e.target.value);
-                                }}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                            size="large"
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                inputProps={{}}
-                            />
-                            {touched.password && errors.password && (
-                                <FormHelperText error id="standard-weight-helper-text-password-register">
-                                    {errors.password}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -217,20 +206,37 @@ const JWTRegister = ({ ...others }) => {
                                     <Grid container spacing={2} alignItems="center">
                                         <Grid item>
                                             <Box
-                                                style={{ backgroundColor: level?.color }}
+                                                style={{
+                                                    backgroundColor: level?.white,
+                                                    display: 'center'
+                                                }}
                                                 sx={{ width: 85, height: 8, borderRadius: '7px' }}
                                             />
                                         </Grid>
                                         <Grid item>
-                                            <Typography variant="subtitle1" fontSize="0.75rem">
-                                                {level?.label}
-                                            </Typography>
+                                            <Typography variant="subtitle1" fontSize="0.75rem"></Typography>
                                         </Grid>
                                     </Grid>
                                 </Box>
                             </FormControl>
                         )}
 
+                        <FormControl fullWidth>
+                            <InputLabel htmlFor="outlined-adornment-profile">Profile</InputLabel>
+                            <Select
+                                id="outlined-adornment-profile"
+                                value={values.profile_id}
+                                onChange={handleChange}
+                                name="profile_id"
+                                label="Profile"
+                            >
+                                {profileOptions.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                         <Grid container alignItems="center" justifyContent="space-between">
                             <Grid item>
                                 <FormControlLabel
@@ -269,6 +275,7 @@ const JWTRegister = ({ ...others }) => {
                                     type="submit"
                                     variant="contained"
                                     color="secondary"
+                                    onClick={() => setIsSuccess(true)}
                                 >
                                     Sign up
                                 </Button>
