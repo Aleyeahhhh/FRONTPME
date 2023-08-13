@@ -7,8 +7,9 @@ import NavMotion from 'layout/NavMotion';
 import Loadable from 'ui-component/Loadable';
 
 // login routing
-const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication3/Login3')));
-const AuthRegister = Loadable(lazy(() => import('views/pages/authentication/authentication3/Register3')));
+const AuthLogin = Loadable(lazy(() => import('views/pages/authentication/authentication1/Login1')));
+const Dashboard = Loadable(lazy(() => import('views/pages/authentication/authentication1/Login1')));
+const AuthRegister = Loadable(lazy(() => import('views/dashboard/Default/index')));
 const AuthForgotPassword = Loadable(lazy(() => import('views/pages/authentication/authentication3/ForgotPassword3')));
 const AuthResetPassword = Loadable(lazy(() => import('views/pages/authentication/authentication3/ResetPassword3')));
 const AuthCheckMail = Loadable(lazy(() => import('views/pages/authentication/authentication3/CheckMail3')));
@@ -44,6 +45,10 @@ const LoginRoutes = {
         {
             path: '/check-mail',
             element: <AuthCheckMail />
+        },
+        {
+            path: '/Dashboard',
+            element: <Dashboard />
         }
     ]
 };

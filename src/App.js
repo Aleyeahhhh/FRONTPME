@@ -42,6 +42,7 @@ const App = () => {
                         <AuthProvider>
                             <>
                                 <Notistack>
+                                 
                                     <Routes />
                                     <Snackbar />
                                 </Notistack>

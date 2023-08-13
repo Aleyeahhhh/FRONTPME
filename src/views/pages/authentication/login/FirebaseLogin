@@ -38,6 +38,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import Google from 'assets/images/icons/google.svg';
+import { IconBrandDjango } from '@tabler/icons';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 

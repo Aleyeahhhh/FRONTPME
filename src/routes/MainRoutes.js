@@ -130,6 +130,10 @@ const UtilsGrid = Loadable(lazy(() => import('views/utilities/Grid')));
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
+//clients routes
+const ClientList = Loadable(lazy(() => import('views/application/clientList/')));
+const AddCustomerForm = Loadable(lazy(() => import('views/application/customer/AddCustomer')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -511,6 +515,14 @@ const MainRoutes = {
         {
             path: '/dashboard/analytics',
             element: <DashboardAnalytics />
+        },
+        {
+            path: '/application/client/list',
+            element: <ClientList />
+        },
+        {
+            path: '/customer/AddCustomer',
+            element: <AddCustomerForm />
         }
     ]
 };

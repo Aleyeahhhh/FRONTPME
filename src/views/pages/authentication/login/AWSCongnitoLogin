@@ -31,6 +31,7 @@ import useScriptRef from 'hooks/useScriptRef';
 // assets
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Login } from '@mui/icons-material';
 
 // ===============================|| JWT LOGIN ||=============================== //
 
@@ -50,6 +51,9 @@ const AwsCognitoLogin = ({ loginProp, ...others }) => {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
+    //  useEffect(() => {
+    //    console.log(Login);
+    // }, [Login]);
 
     return (
         <Formik

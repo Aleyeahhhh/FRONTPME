@@ -51,6 +51,9 @@ const JWTLogin = ({ loginProp, ...others }) => {
         event.preventDefault();
     };
 
+    // useEffect(() => {
+    //     console.log(handleMouseDownPassword);
+    // }, [handleMouseDownPassword]);
     return (
         <Formik
             initialValues={{

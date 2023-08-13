@@ -12,6 +12,7 @@ import Logo from 'ui-component/Logo';
 import BackgroundPattern1 from 'ui-component/cards/BackgroundPattern1';
 import AuthSlider from 'ui-component/cards/AuthSlider';
 
+
 // assets
 import AuthBlueCard from 'assets/images/auth/auth-blue-card.svg';
 import AuthPurpleCard from 'assets/images/auth/auth-purple-card.svg';
@@ -69,6 +70,7 @@ const Login = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
 
+    
     return (
         <AuthWrapper1>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ minHeight: '100vh' }}>
