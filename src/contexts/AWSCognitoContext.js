@@ -109,14 +109,15 @@ export const AWSCognitoProvider = ({ children }) => {
         });
     };
 
-    const register = (email, password, firstName, lastName) =>
+    const register = (email, firstName, lastName, description, profile_id) =>
         new Promise((success, rej) => {
             userPool.signUp(
                 email,
-                password,
                 [
                     new CognitoUserAttribute({ Name: 'email', Value: email }),
-                    new CognitoUserAttribute({ Name: 'name', Value: `${firstName} ${lastName}` })
+                    new CognitoUserAttribute({ Name: 'name', Value: `${firstName} ${lastName}` }),
+                    new CognitoUserAttribute({ Name: 'description', Value: description }),
+                    new CognitoUserAttribute({ Name: 'profile_id', Value: profile_id })
                 ],
                 [],
                 async (err, result) => {

@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer } from 'react';
-
 // third-party
 import { Chance } from 'chance';
 import jwtDecode from 'jwt-decode';
@@ -48,7 +47,6 @@ const JWTContext = createContext(null);
 
 export const JWTProvider = ({ children }) => {
     const [state, dispatch] = useReducer(accountReducer, initialState);
-
     useEffect(() => {
         const init = async () => {
             try {
@@ -81,7 +79,7 @@ export const JWTProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        const response = await axios.post('/api/account/login', { email, password });
+        const response = await axios.post('/users/login', { email, password });
         const { serviceToken, user } = response.data;
         setSession(serviceToken);
         dispatch({
@@ -93,27 +91,53 @@ export const JWTProvider = ({ children }) => {
         });
     };
 
-    const register = async (email, password, firstName, lastName) => {
+    const register = async (nom, prenom, email, description, profile_id) => {
         // todo: this flow need to be recode as it not verified
         const id = chance.bb_pin();
-        const response = await axios.post('/api/account/register', {
+        const response = await axios.post('/users/register', {
             id,
+            nom,
+            prenom,
             email,
-            password,
-            firstName,
-            lastName
+            description,
+            profile_id
         });
         let users = response.data;
 
         if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
             const localUsers = window.localStorage.getItem('users');
+            try {
+                const parsedLocalUsers = JSON.parse(localUsers);
+                if (Array.isArray(parsedLocalUsers)) {
+                    users = [
+                        ...parsedLocalUsers,
+                        {
+                            id,
+                            prenom,
+                            nom,
+                            email,
+                            description,
+                            profile_id
+                        }
+                    ];
+                } else {
+                    console.error('Invalid format of localUsers:', parsedLocalUsers);
+                    // Handle the case where parsedLocalUsers is not an array
+                }
+            } catch (error) {
+                console.error('Error parsing localUsers:', error);
+                // Handle parsing error
+            }
+        } else {
+            // This is the first time or localUsers is not stored yet
             users = [
-                ...JSON.parse(localUsers),
                 {
                     id,
+                    prenom,
+                    nom,
                     email,
-                    password,
-                    name: `${firstName} ${lastName}`
+                    description,
+                    profile_id
                 }
             ];
         }
@@ -137,7 +161,7 @@ export const JWTProvider = ({ children }) => {
     }
 
     return (
-        <JWTContext.Provider value={{ ...state, login, logout, register, resetPassword, updateProfile }}>{children}</JWTContext.Provider>
+        <JWTContext.Provider value={{ ...state, register, login, logout, resetPassword, updateProfile }}>{children}</JWTContext.Provider>
     );
 };
 

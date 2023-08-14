@@ -37,7 +37,6 @@ const JWTRegister = ({ ...others }) => {
 
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const [checked, setChecked] = React.useState(true);
-
     const [strength, setStrength] = React.useState(0);
     const [level, setLevel] = React.useState();
     const { register } = useAuth();
@@ -47,7 +46,9 @@ const JWTRegister = ({ ...others }) => {
         setStrength(temp);
         setLevel(strengthColor(temp));
     };
-
+    // register = () => {
+    //     console.log('fsdfd');
+    // };
     useEffect(() => {
         changePassword('123456');
     }, []);

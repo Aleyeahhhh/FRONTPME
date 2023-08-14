@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -35,6 +35,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // ===============================|| JWT LOGIN ||=============================== //
 
 const JWTLogin = ({ loginProp, ...others }) => {
+    const [isSuccess, setIsSuccess] = useState(false);
+
     const theme = useTheme();
 
     const { login } = useAuth();
@@ -54,21 +56,44 @@ const JWTLogin = ({ loginProp, ...others }) => {
     return (
         <Formik
             initialValues={{
-                email: 'info@codedthemes.com',
-                password: '123456',
+                email: '',
+                password: '',
                 submit: null
             }}
             validationSchema={Yup.object().shape({
-                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                password: Yup.string().max(255).required('Password is required')
+                email: Yup.string().required('Email is required'),
+                password: Yup.string().required('Password is required')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
+                    console.log('values:', values);
                     await login(values.email, values.password);
 
                     if (scriptedRef.current) {
                         setStatus({ success: true });
                         setSubmitting(false);
+                        if (isSuccess) {
+                            // Send POST request to the backend API
+                            axios
+                                .post('http://127.0.0.1:5000/users/login', {
+                                    email: values.email,
+                                    password: values.password // Send plain text password
+                                })
+                                .then((response) => {
+                                    if (response.status === 200) {
+                                        // Handle success
+                                        console.log('User login successful');
+                                    } else {
+                                        // Handle error
+                                        console.error('Failed to login with this user');
+                                        setErrors({ submit: 'Invalid email or password' });
+                                    }
+                                })
+                                .catch((error) => {
+                                    // Handle error
+                                    console.error('Error logging in:', error);
+                                });
+                        }
                     }
                 } catch (err) {
                     console.error(err);
@@ -83,7 +108,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
                     <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-email-login">Email Address </InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-email-login"
                             type="email"
@@ -170,7 +195,15 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     )}
                     <Box sx={{ mt: 2 }}>
                         <AnimateButton>
-                            <Button color="secondary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
+                            <Button
+                                onClick={() => setIsSuccess(true)}
+                                color="secondary"
+                                disabled={isSubmitting}
+                                fullWidth
+                                size="large"
+                                type="submit"
+                                variant="contained"
+                            >
                                 Sign In
                             </Button>
                         </AnimateButton>
