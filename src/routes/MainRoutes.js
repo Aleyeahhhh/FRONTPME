@@ -16,8 +16,6 @@ const WidgetChart = Loadable(lazy(() => import('views/widget/Chart')));
 
 // application - user social & account profile routing
 const AppUserSocialProfile = Loadable(lazy(() => import('views/application/users/social-profile')));
-const AppUserAccountProfile1 = Loadable(lazy(() => import('views/application/users/account-profile/Profile1')));
-const AppUserAccountProfile2 = Loadable(lazy(() => import('views/application/users/account-profile/Profile2')));
 const AppUserAccountProfile3 = Loadable(lazy(() => import('views/application/users/account-profile/Profile3')));
 
 // application - user cards & list variant routing
@@ -158,15 +156,7 @@ const MainRoutes = {
             element: <AppUserSocialProfile />
         },
         {
-            path: '/user/account-profile/profile1',
-            element: <AppUserAccountProfile1 />
-        },
-        {
-            path: '/user/account-profile/profile2',
-            element: <AppUserAccountProfile2 />
-        },
-        {
-            path: '/user/account-profile/profile3',
+            path: '/user/account-profile/profile3/:index', // zed fazet   /:index
             element: <AppUserAccountProfile3 />
         },
 

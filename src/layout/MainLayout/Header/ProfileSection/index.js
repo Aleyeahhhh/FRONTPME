@@ -1,27 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
+import SimpleModal from 'views/forms/plugins/Modal/SimpleModal';
+import FriendsCard from 'ui-component/cards/FriendsCard';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
     Avatar,
     Box,
     Card,
-    CardContent,
     Chip,
     ClickAwayListener,
     Divider,
     Grid,
-    InputAdornment,
+    CardContent,
     List,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    OutlinedInput,
     Paper,
     Popper,
     Stack,
-    Switch,
     Typography
 } from '@mui/material';
 
@@ -30,14 +29,15 @@ import { FormattedMessage } from 'react-intl';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 // project imports
+import SubCard from 'ui-component/cards/SubCard';
+
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
 import useAuth from 'hooks/useAuth';
 import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import { IconLogout, IconSettings, IconUser } from '@tabler/icons';
 import useConfig from 'hooks/useConfig';
 
 // ==============================|| PROFILE MENU ||============================== //
@@ -46,13 +46,11 @@ const ProfileSection = () => {
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const navigate = useNavigate();
-
-    const [sdm, setSdm] = useState(true);
-    const [value, setValue] = useState('');
-    const [notification, setNotification] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
     const [open, setOpen] = useState(false);
+    const [doo, setDoo] = useState([]);
+
     /**
      * anchorRef is used on different components and specifying one type leads to other components throwing an error
      * */
@@ -77,7 +75,10 @@ const ProfileSection = () => {
 
         if (route && route !== '') {
             navigate(route);
+        } else {
+            <SimpleModal />;
         }
+        // else show Modal for input add entreprise
     };
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -91,6 +92,23 @@ const ProfileSection = () => {
 
         prevOpen.current = open;
     }, [open]);
+
+    // ken ya3mel delete lel entreprise id1 bech tikrachi el fct(fasa5t'ha) eli lfou9...fix (fl back)updayti el entreprise id dynamically
+    // lien_logo mouch 9a3ed yetafficha w mouch 9a3ed yetb3ath lel back mel postman request ama ki nektbou fel pgadmin toul yetsayva ama
+    // me yetb3athch lel front (me toth'horch el attribut mta3ou jemla)
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:5000/entreprise/get_entreprise')
+            .then((res) => {
+                console.log(res.data.entreprises);
+
+                setDoo(res.data.entreprises);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
     return (
         <>
@@ -163,31 +181,20 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    <Typography variant="h4">Good Morning,</Typography>
-                                                    <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                        {user?.name}
-                                                    </Typography>
+                                                    {doo && (
+                                                        <>
+                                                            <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
+                                                                Bienvenue dans
+                                                            </Typography>
+                                                            <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
+                                                                {doo[0]?.nom}
+                                                            </Typography>
+                                                        </>
+                                                    )}
                                                 </Stack>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
                                             </Stack>
-                                            <OutlinedInput
-                                                sx={{ width: '100%', pr: 1, pl: 2, my: 2 }}
-                                                id="input-search-profile"
-                                                value={value}
-                                                onChange={(e) => setValue(e.target.value)}
-                                                placeholder="Search profile options"
-                                                startAdornment={
-                                                    <InputAdornment position="start">
-                                                        <IconSearch stroke={1.5} size="16px" color={theme.palette.grey[500]} />
-                                                    </InputAdornment>
-                                                }
-                                                aria-describedby="search-helper-text"
-                                                inputProps={{
-                                                    'aria-label': 'weight'
-                                                }}
-                                            />
-                                            <Divider />
                                         </Box>
+
                                         <PerfectScrollbar
                                             style={{
                                                 height: '100%',
@@ -196,8 +203,6 @@ const ProfileSection = () => {
                                             }}
                                         >
                                             <Box sx={{ p: 2, pt: 0 }}>
-                                                <UpgradePlanCard />
-                                                <Divider />
                                                 <Card
                                                     sx={{
                                                         bgcolor:
@@ -207,42 +212,28 @@ const ProfileSection = () => {
                                                         my: 2
                                                     }}
                                                 >
-                                                    <CardContent>
-                                                        <Grid container spacing={3} direction="column">
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Start DND Mode</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            color="primary"
-                                                                            checked={sdm}
-                                                                            onChange={(e) => setSdm(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                            <Grid item>
-                                                                <Grid item container alignItems="center" justifyContent="space-between">
-                                                                    <Grid item>
-                                                                        <Typography variant="subtitle1">Allow Notifications</Typography>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <Switch
-                                                                            checked={notification}
-                                                                            onChange={(e) => setNotification(e.target.checked)}
-                                                                            name="sdm"
-                                                                            size="small"
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </CardContent>
+                                                    {doo &&
+                                                        doo.map((item, index) => {
+                                                            return (
+                                                                <ListItemButton
+                                                                    onClick={() => {
+                                                                        navigate('/user/account-profile/profile3/' + index);
+                                                                        window.location.reload(true);
+                                                                    }}
+                                                                    key={index}
+                                                                >
+                                                                    <ListItemText
+                                                                        primary={
+                                                                            <Typography variant="body1">
+                                                                                <FormattedMessage id={item.nom} />
+                                                                            </Typography>
+                                                                        }
+                                                                    />
+                                                                </ListItemButton>
+                                                            );
+                                                        })}
                                                 </Card>
+
                                                 <Divider />
                                                 <List
                                                     component="nav"
@@ -263,7 +254,7 @@ const ProfileSection = () => {
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
-                                                        onClick={(event) => handleListItemClick(event, 0, '/user/account-profile/profile1')}
+                                                        onClick={(event) => handleListItemClick(event, 0, '/user/account-profile/profile3')}
                                                     >
                                                         <ListItemIcon>
                                                             <IconSettings stroke={1.5} size="20px" />

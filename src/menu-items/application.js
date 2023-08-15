@@ -42,27 +42,8 @@ const application = {
                     type: 'collapse',
                     children: [
                         {
-                            id: 'profile1',
-                            title: (
-                                <>
-                                    <FormattedMessage id="profile" /> 01
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/account-profile/profile1'
-                        },
-                        {
-                            id: 'profile2',
-                            title: (
-                                <>
-                                    <FormattedMessage id="profile" /> 02
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/account-profile/profile2'
-                        },
-                        {
                             id: 'profile3',
+
                             title: (
                                 <>
                                     <FormattedMessage id="profile" /> 03
