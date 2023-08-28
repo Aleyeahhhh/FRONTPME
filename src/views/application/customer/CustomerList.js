@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
-import * as React from 'react';
+import { useState, useEffect } from 'react'; // Utilisez simplement useState et useEffect ici
+import axios from 'axios';
+import React from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -10,6 +12,7 @@ import {
     Grid,
     IconButton,
     InputAdornment,
+    Modal,
     Table,
     TableBody,
     TableCell,
@@ -24,9 +27,13 @@ import {
     Typography
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
+import Button from '@mui/material/Button';
+// Import the AddCustomerForm component
+
+import AddCustomerForm from './AddCustomer';
 
 // project imports
-import Chip from 'ui-component/extended/Chip';
+//import Chip from 'ui-component/extended/Chip';
 import MainCard from 'ui-component/cards/MainCard';
 import { useDispatch, useSelector } from 'store';
 import { getCustomers } from 'store/slices/customer';
@@ -41,59 +48,68 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 
 // table sort
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}
+// function descendingComparator(a, b, orderBy) {
+//     if (b[orderBy] < a[orderBy]) {
+//         return -1;
+//     }
+//     if (b[orderBy] > a[orderBy]) {
+//         return 1;
+//     }
+//     return 0;
+// }
 
-const getComparator = (order, orderBy) =>
-    order === 'desc' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);
+// const ClientsData = () => {
 
-function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
+// }
 
 // table header options
 const headCells = [
     {
-        id: 'name',
-        numeric: false,
-        label: 'Customer Name',
+        id: 'ID',
+        numeric: true,
+        label: 'IDd',
         align: 'left'
     },
     {
-        id: 'location',
+        id: 'Nom',
         numeric: true,
-        label: 'Location',
+        label: 'Nom',
         align: 'left'
     },
     {
-        id: 'orders',
+        id: 'adresse',
         numeric: true,
-        label: 'Orders',
+        label: 'adresse',
         align: 'right'
     },
     {
-        id: 'date',
+        id: 'contact',
         numeric: true,
-        label: 'Registered',
+        label: 'contact',
         align: 'center'
     },
     {
-        id: 'status',
+        id: 'Id_entreprise',
         numeric: false,
-        label: 'Status',
+        label: 'Id_entreprise',
+        align: 'center'
+    },
+    {
+        id: 'frequence_relance',
+        numeric: false,
+        label: 'frequence_relance',
+        align: 'center'
+    },
+    {
+        id: 'email_destinataire',
+        numeric: false,
+        label: 'email_destinataire',
+        align: 'center'
+    },
+    {
+        id: 'email_copies',
+        numeric: false,
+        label: 'email_copies',
         align: 'center'
     }
 ];
@@ -107,7 +123,7 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
 
     return (
         <TableHead>
-            <TableRow>
+            <TableRow key={null}>
                 <TableCell padding="checkbox" sx={{ pl: 3 }}>
                     <Checkbox
                         color="primary"
@@ -119,6 +135,7 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
                         }}
                     />
                 </TableCell>
+
                 {numSelected > 0 && (
                     <TableCell padding="none" colSpan={6}>
                         <EnhancedTableToolbar numSelected={selected.length} />
@@ -146,6 +163,7 @@ function EnhancedTableHead({ onSelectAllClick, order, orderBy, numSelected, rowC
                             </TableSortLabel>
                         </TableCell>
                     ))}
+
                 {numSelected <= 0 && (
                     <TableCell sortDirection={false} align="center" sx={{ pr: 3 }}>
                         Action
@@ -206,6 +224,8 @@ EnhancedTableToolbar.propTypes = {
 // ==============================|| CUSTOMER LIST ||============================== //
 
 const CustomerList = () => {
+    const [isAddFormVisible, setIsAddFormVisible] = useState(false);
+
     const theme = useTheme();
     const dispatch = useDispatch();
 
@@ -217,6 +237,21 @@ const CustomerList = () => {
     const [search, setSearch] = React.useState('');
     const [rows, setRows] = React.useState([]);
     const { customers } = useSelector((state) => state.customer);
+
+    const [clientData, setClientData] = useState([]);
+
+    useEffect(() => {
+        axios
+            .get('http://localhost:5000/client/get_client')
+            .then((res) => {
+                console.log(res.data.clients.client);
+                setClientData(res.data.clients.client);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
+
     React.useEffect(() => {
         dispatch(getCustomers());
     }, [dispatch]);
@@ -300,6 +335,10 @@ const CustomerList = () => {
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+    useEffect(() => {
+        console.log(isAddFormVisible);
+    }, [isAddFormVisible]);
+
     return (
         <MainCard title="Customer List" content={false}>
             <CardContent>
@@ -335,28 +374,54 @@ const CustomerList = () => {
                                 <FilterListIcon />
                             </IconButton>
                         </Tooltip>
+
+                        <Modal
+                            open={isAddFormVisible}
+                            onClose={() => {
+                                setIsAddFormVisible(!isAddFormVisible);
+                            }}
+                        >
+                            <Box
+                                style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    width: 500,
+                                    backgroundColor: '#ffffff',
+                                    border: '2px solid #000',
+                                    boxShadow: 24,
+                                    height: '80%',
+                                    p: 4
+                                }}
+                            >
+                                <AddCustomerForm setIsAddFormVisible={setIsAddFormVisible} />
+                            </Box>
+                        </Modal>
+
+                        <Button variant="text" color="inherit" style={{ color: '#00BFFF' }} onClick={() => setIsAddFormVisible(true)}>
+                            ADD
+                        </Button>
                     </Grid>
                 </Grid>
             </CardContent>
 
             {/* table */}
-            <TableContainer>
-                <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-                    <EnhancedTableHead
-                        theme={theme}
-                        numSelected={selected.length}
-                        order={order}
-                        orderBy={orderBy}
-                        onSelectAllClick={handleSelectAllClick}
-                        onRequestSort={handleRequestSort}
-                        rowCount={rows.length}
-                        selected={selected}
-                    />
-                    <TableBody>
-                        {stableSort(rows, getComparator(order, orderBy))
-                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row, index) => {
-                                /** Make sure no display bugs if row isn't an OrderData object */
+            {!isAddFormVisible && (
+                <TableContainer>
+                    <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+                        <EnhancedTableHead
+                            theme={theme}
+                            numSelected={selected.length}
+                            order={order}
+                            orderBy={orderBy}
+                            onSelectAllClick={handleSelectAllClick}
+                            onRequestSort={handleRequestSort}
+                            rowCount={rows.length}
+                            selected={selected}
+                        />
+                        <TableBody>
+                            {clientData.map((row, index) => {
                                 if (typeof row === 'number') return null;
                                 const isItemSelected = isSelected(row.name);
                                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -379,30 +444,14 @@ const CustomerList = () => {
                                                 }}
                                             />
                                         </TableCell>
-                                        <TableCell
-                                            component="th"
-                                            id={labelId}
-                                            scope="row"
-                                            onClick={(event) => handleClick(event, row.name)}
-                                            sx={{ cursor: 'pointer' }}
-                                        >
-                                            <Typography
-                                                variant="subtitle1"
-                                                sx={{ color: theme.palette.mode === 'dark' ? 'grey.600' : 'grey.900' }}
-                                            >
-                                                {' '}
-                                                {row.name}{' '}
-                                            </Typography>
-                                            <Typography variant="caption"> {row.email} </Typography>
-                                        </TableCell>
-                                        <TableCell>{row.location}</TableCell>
-                                        <TableCell align="right">{row.orders}</TableCell>
-                                        <TableCell align="center">{row.date}</TableCell>
-                                        <TableCell align="center">
-                                            {row.status === 1 && <Chip label="Complete" size="small" chipcolor="success" />}
-                                            {row.status === 2 && <Chip label="Processing" size="small" chipcolor="orange" />}
-                                            {row.status === 3 && <Chip label="Confirm" size="small" chipcolor="primary" />}
-                                        </TableCell>
+                                        <TableCell>{row.id}</TableCell>
+                                        <TableCell>{row.nom}</TableCell>
+                                        <TableCell>{row.adresse}</TableCell>
+                                        <TableCell>{row.contact}</TableCell>
+                                        <TableCell>{row.id_Entreprise}</TableCell>
+                                        <TableCell>{row.frequence_relance}</TableCell>
+                                        <TableCell>{row.email_destinataire}</TableCell>
+                                        <TableCell>{row.email_copies}</TableCell>
                                         <TableCell align="center" sx={{ pr: 3 }}>
                                             <IconButton color="primary" size="large" aria-label="view">
                                                 <VisibilityTwoToneIcon sx={{ fontSize: '1.3rem' }} />
@@ -414,18 +463,19 @@ const CustomerList = () => {
                                     </TableRow>
                                 );
                             })}
-                        {emptyRows > 0 && (
-                            <TableRow
-                                style={{
-                                    height: 53 * emptyRows
-                                }}
-                            >
-                                <TableCell colSpan={6} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                            {emptyRows > 0 && (
+                                <TableRow
+                                    style={{
+                                        height: 53 * emptyRows
+                                    }}
+                                >
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
 
             {/* table pagination */}
             <TablePagination
@@ -437,6 +487,9 @@ const CustomerList = () => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
+
+            {/* Afficher le formulaire AddCustomerForm si isAddFormVisible est true */}
+            {isAddFormVisible && <AddCustomerForm setIsAddFormVisible={setIsAddFormVisible} />}
         </MainCard>
     );
 };

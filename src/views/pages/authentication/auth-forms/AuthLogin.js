@@ -27,6 +27,8 @@ import { Formik } from 'formik';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
+//import Dashboard from './views/dashboard/Default/index.js';
+// import Dashboard from 'views/dashboard/Default/index';
 
 // assets
 import Visibility from '@mui/icons-material/Visibility';
@@ -121,7 +123,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 }
             }}
         >
-            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+            {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
                     <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
                         <InputLabel htmlFor="outlined-adornment-email-login">Adresse e-mail </InputLabel>

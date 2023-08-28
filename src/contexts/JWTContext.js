@@ -151,6 +151,7 @@ export const JWTProvider = ({ children }) => {
     };
 
     const resetPassword = async (email) => {
+        
         console.log(email);
     };
 
