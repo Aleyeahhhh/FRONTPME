@@ -1,7 +1,6 @@
-import PropTypes from 'prop-types';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import React from 'react';
+import React, { useContext } from 'react';
 
 // assets
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,36 +15,44 @@ import axios from 'axios';
 // assets
 import Avatar1 from 'assets/images/users/avatar-1.png';
 import { useParams } from 'react-router-dom';
-// import { setIn } from 'formik';
-import { value } from 'assets/scss/_themes-vars.module.scss';
+import { set } from 'lodash';
+import GlobalContext from 'contexts/GlobalContext';
 
 // ==============================|| PROFILE 3 - PROFILE ||============================== //
 
 const Profile = () => {
-    const { index } = useParams();
-    const [open, setOpen] = React.useState(false);
-    const [income, setIncome] = useState();
+    const { selectedEnterprise, setSelectedEnterprise, userProfile, singlEntreprise, setSinglEntreprise } = useContext(GlobalContext);
+    // const { index } = useParams();
+
+    const [open, setOpen] = useState(false);
+    const [avataropen, setAvataropen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [entreprise, setEntreprise] = useState({
         nom: '',
         adresse: '',
         description: '',
         email: '',
-        tel: null,
-        // logo_path: '',
-        creation_date: '',
-        color: '#000000'
+        tel: '',
+        lien_logo: ''
     });
     const [modifyentreprise, setModifyentreprise] = useState({
         nom: '',
         adresse: '',
         description: '',
         email: '',
-        tel: null,
-        // logo_path: '',
-        creation_date: '',
-        color: '#000000'
+        tel: '',
+        lien_logo: ''
     });
+    useEffect(() => {
+        console.log(avataropen);
+    }, [avataropen]);
+    const handleOn = () => {
+        setAvataropen(true);
+    };
+    const handleOff = () => {
+        setAvataropen(false);
+    };
+
     React.useEffect(() => {
         console.log(open);
     }, [open]);
@@ -58,37 +65,45 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        console.log(index);
-    }, [index]);
-    // const { user } = useAuth();????????????????
+        console.log(singlEntreprise);
+    }, [singlEntreprise]);
 
     const toggleEdit = () => {
-        setIsEditing(true);
+        setIsEditing(!isEditing);
     };
+    // changes
+
     const handleSave = () => {
         axios
-            .put('http://localhost:5000/entreprise/update/' + index, modifyentreprise)
+            .put('http://localhost:5000/entreprise/update/' + selectedEnterprise, modifyentreprise)
             .then((res) => {
                 console.log(res.data);
-                console.log(modifyentreprise);
                 setIsEditing(false);
+                setAvataropen(false);
             })
             .catch((err) => {
                 console.log('Error', err);
             });
     };
+    //                     the default value of the text fields once the page loads METHOD1
 
-    useEffect(() => {
-        axios
-            .get('http://localhost:5000/entreprise/get_entreprise')
-            .then((res) => {
-                console.log(res.data.entreprises);
-                setIncome(res.data.entreprises[index]);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
+    // useEffect(() => {
+    //     axios
+    //         .get('http://localhost:5000/entreprise/get_entreprise')
+    //         .then((res) => {
+    //             console.log(res.data.entreprises);
+    //             setSinglEntreprise(res.data.entreprises[selectedEnterprise]);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
+    // }, [selectedEnterprise]);
+
+    //                     the default value of the text fields once the page loads METHOD2
+
+    // useEffect(() => {
+    //     setSinglEntreprise(userProfile[selectedEnterprise]);
+    // }, [selectedEnterprise]);
 
     const handleEntrepriseModify = (fieldName) => (event) => {
         // updating the data state
@@ -106,7 +121,6 @@ const Profile = () => {
         }));
     };
     const handleEntrepriseAdd = () => {
-        // axios add request
         axios
             .post('http://localhost:5000/entreprise/create', entreprise)
             .then((response) => {
@@ -118,9 +132,7 @@ const Profile = () => {
                     description: '',
                     email: '',
                     tel: '',
-                    // logo_path: '',
-                    creation_date: '2122-11-1',
-                    color: '#000000'
+                    lien_logo: ''
                 });
             })
             .catch((err) => {
@@ -130,7 +142,7 @@ const Profile = () => {
     // deleting entreprise
     const handleDelete = () => {
         axios
-            .delete('http://localhost:5000/entreprise/delete/' + index)
+            .delete('http://localhost:5000/entreprise/delete/' + selectedEnterprise)
             .then((res) => {
                 console.log(res.data);
             })
@@ -138,94 +150,143 @@ const Profile = () => {
                 console.log('error', err);
             });
     };
+
     return (
         <Grid container spacing={gridSpacing}>
-            <Modal open={open} onClose={handleClose} aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description">
-                <div>
-                    <MainCard
-                        sx={{
-                            position: 'absolute',
-                            width: { xs: 280, lg: 450 },
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)'
-                        }}
-                        title="Ajouter un nouveau entreprise"
-                        content={false}
-                        secondary={
-                            <IconButton onClick={handleClose} size="large">
-                                <CloseIcon fontSize="small" />
-                            </IconButton>
-                        }
+            {open ? (
+                <Modal open={open} onClose={handleClose} aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description">
+                    <div>
+                        <MainCard
+                            sx={{
+                                position: 'absolute',
+                                width: { xs: 280, lg: 450 },
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)'
+                            }}
+                            title="Ajouter un nouveau entreprise"
+                            content={false}
+                            secondary={
+                                <IconButton onClick={handleClose} size="large">
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            }
+                        >
+                            <CardContent>
+                                <TextField
+                                    value={entreprise?.nom}
+                                    onChange={handleEntrepriseChange('nom')}
+                                    fullWidth
+                                    label="nom"
+                                    placeholder="Nom de l'entreprise"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+                                <TextField
+                                    value={entreprise?.adresse}
+                                    onChange={handleEntrepriseChange('adresse')}
+                                    fullWidth
+                                    label="adresse"
+                                    placeholder="Adresse de l'entreprise"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+                                <TextField
+                                    value={entreprise?.description}
+                                    onChange={handleEntrepriseChange('description')}
+                                    fullWidth
+                                    label="description"
+                                    placeholder="Description de l'entreprise"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+                                <TextField
+                                    value={entreprise?.email}
+                                    onChange={handleEntrepriseChange('email')}
+                                    fullWidth
+                                    label="email"
+                                    placeholder="example@email.com"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+                                <TextField
+                                    value={entreprise?.tel}
+                                    onChange={handleEntrepriseChange('tel')}
+                                    fullWidth
+                                    label="tel"
+                                    placeholder="Telephone de l'entreprise"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+
+                                <TextField
+                                    onChange={handleEntrepriseChange('lien_logo')}
+                                    fullWidth
+                                    label="lien_logo"
+                                    placeholder="logo_URL de l'entreprise"
+                                    style={{ marginBottom: '1rem' }}
+                                />
+                            </CardContent>
+                            <Divider />
+                            <CardActions>
+                                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <AnimateButton>
+                                        <Button onClick={handleEntrepriseAdd} variant="outlined">
+                                            Ajouter entreprise
+                                        </Button>
+                                    </AnimateButton>
+                                </Grid>
+                            </CardActions>
+                        </MainCard>
+                    </div>
+                </Modal>
+            ) : (
+                avataropen && (
+                    <Modal
+                        open={avataropen}
+                        onClose={handleOff}
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
                     >
-                        <CardContent>
-                            <TextField
-                                value={entreprise?.nom}
-                                onChange={handleEntrepriseChange('nom')}
-                                fullWidth
-                                label="nom"
-                                placeholder="Nom de l'entreprise"
-                                style={{ marginBottom: '1rem' }}
-                            />
-                            <TextField
-                                value={entreprise?.adresse}
-                                onChange={handleEntrepriseChange('adresse')}
-                                fullWidth
-                                label="adresse"
-                                placeholder="Adresse de l'entreprise"
-                                style={{ marginBottom: '1rem' }}
-                            />
-                            <TextField
-                                value={entreprise?.description}
-                                onChange={handleEntrepriseChange('description')}
-                                fullWidth
-                                label="description"
-                                placeholder="Description de l'entreprise"
-                                style={{ marginBottom: '1rem' }}
-                            />
-                            <TextField
-                                value={entreprise?.email}
-                                onChange={handleEntrepriseChange('email')}
-                                fullWidth
-                                label="email"
-                                placeholder="example@email.com"
-                                style={{ marginBottom: '1rem' }}
-                            />
-                            <TextField
-                                value={entreprise?.tel}
-                                onChange={handleEntrepriseChange('tel')}
-                                fullWidth
-                                label="tel"
-                                placeholder="Telephone de l'entreprise"
-                                style={{ marginBottom: '1rem' }}
-                            />
-                            {/*
-                                <TextField 
-                                onChange={handleEntrepriseChange}
-                                fullWidth 
-                                label="Date_Création" 
-                                placeholder="Date_Création de l'entreprise" 
-                                style={{ marginBottom: '1rem' }} />
-                            <TextField *
-                                onChange={handleEntrepriseChange}
-                                fullWidth   
-                                label="logo_URL"
-                                 placeholder="logo_URL de l'entreprise" 
-                                 style={{ marginBottom: '1rem' }} /> */}
-                        </CardContent>
-                        <Divider />
-                        <CardActions>
-                            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
-                                <AnimateButton>
-                                    <Button onClick={handleEntrepriseAdd} variant="outlined">
-                                        Ajouter entreprise
-                                    </Button>
-                                </AnimateButton>
-                            </Grid>
-                        </CardActions>
-                    </MainCard>
-                </div>
-            </Modal>
+                        <MainCard
+                            sx={{
+                                position: 'absolute',
+                                width: { xs: 280, lg: 450 },
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)'
+                            }}
+                            title="Mettre a jour le logo de cet entreprise"
+                            content={false}
+                            secondary={
+                                <IconButton onClick={handleOff} size="large">
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            }
+                        >
+                            <CardContent>
+                                <Grid item md={12}>
+                                    {singlEntreprise && (
+                                        <TextField
+                                            onChange={handleEntrepriseModify('lien_logo')}
+                                            style={{ width: '100%' }}
+                                            id="outlined-basic8"
+                                            fullWidth
+                                            label="lien_logo"
+                                            defaultValue={singlEntreprise?.lien_logo}
+                                        />
+                                    )}
+                                </Grid>
+                            </CardContent>
+                            <Divider />
+                            <CardActions>
+                                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <AnimateButton>
+                                        <Button onClick={handleSave} variant="outlined">
+                                            Enregistrer logo
+                                        </Button>
+                                    </AnimateButton>
+                                </Grid>
+                            </CardActions>
+                        </MainCard>
+                    </Modal>
+                )
+            )}
             <Grid item sm={6} md={4}>
                 <SubCard title="Profile Picture" contentSX={{ textAlign: 'center' }}>
                     <Grid container spacing={2}>
@@ -239,8 +300,8 @@ const Profile = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <AnimateButton>
-                                <Button variant="contained" size="small">
-                                    Upload Avatar
+                                <Button variant="contained" size="small" onClick={handleOn}>
+                                    Update Logo
                                 </Button>
                             </AnimateButton>
                         </Grid>
@@ -284,81 +345,80 @@ const Profile = () => {
                 <SubCard title="Modifier Les Détails De l'entreprise">
                     <Grid container spacing={gridSpacing}>
                         <Grid item xs={12}>
-                            {income && (
+                            {singlEntreprise && (
                                 <TextField
+                                    key={selectedEnterprise}
                                     onChange={handleEntrepriseModify('nom')}
                                     disabled={!isEditing}
                                     id="outlined-basic1"
                                     fullWidth
                                     label="nom"
-                                    // defaultValue={user?.name}
-                                    defaultValue={income?.nom}
+                                    defaultValue={singlEntreprise?.nom}
                                 />
                             )}
                         </Grid>
 
                         <Grid item xs={12}>
-                            {income && (
-                                <TextField
-                                    onChange={handleEntrepriseModify('email')}
-                                    disabled={!isEditing}
-                                    id="outlined-basic6"
-                                    fullWidth
-                                    label="email"
-                                    defaultValue={income?.email}
-                                    // defaultValue="emailemail"
-                                />
-                            )}
+                            <TextField
+                                key={selectedEnterprise}
+                                onChange={handleEntrepriseModify('email')}
+                                disabled={!isEditing}
+                                id="outlined-basic6"
+                                fullWidth
+                                label="email"
+                                defaultValue={singlEntreprise?.email}
+                            />
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            {income && (
+                            {singlEntreprise && (
                                 <TextField
+                                    key={selectedEnterprise}
                                     onChange={handleEntrepriseModify('description')}
                                     disabled={!isEditing}
                                     id="outlined-basic4"
                                     fullWidth
                                     label="description"
-                                    defaultValue={income?.description}
+                                    defaultValue={singlEntreprise?.description}
                                 />
                             )}
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            {income && (
+                            {singlEntreprise && (
                                 <TextField
+                                    key={selectedEnterprise}
                                     onChange={handleEntrepriseModify('adresse')}
                                     disabled={!isEditing}
                                     id="outlined-basic5"
                                     fullWidth
                                     label="adresse"
-                                    defaultValue={income?.adresse}
+                                    defaultValue={singlEntreprise?.adresse}
                                 />
                             )}
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            {income && (
+                            {singlEntreprise && (
                                 <TextField
+                                    key={selectedEnterprise}
                                     onChange={handleEntrepriseModify('tel')}
                                     disabled={!isEditing}
                                     id="outlined-basic7"
                                     fullWidth
                                     label="tel"
                                     // defaultValue="4578-420-410 "
-                                    defaultValue={income?.tel}
+                                    defaultValue={singlEntreprise?.tel}
                                 />
                             )}
                         </Grid>
                         <Grid item md={6} xs={12}>
-                            {income && (
+                            {singlEntreprise && (
                                 <TextField
+                                    key={selectedEnterprise}
                                     onChange={handleEntrepriseModify('creation_date')}
-                                    disabled={!isEditing}
+                                    disabled={true}
                                     id="outlined-basic8"
                                     fullWidth
                                     label="creation_date"
-                                    defaultValue="31/01/2001"
-                                    // date creation not being received in the incomming data !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                    // nor the logo path but this one isnt even being set in the pgadmin even when i give it a value it
-                                    // dosent show
+                                    defaultValue={singlEntreprise?.creation_date}
                                 />
                             )}
                         </Grid>
@@ -369,7 +429,7 @@ const Profile = () => {
                                         Change Details
                                     </Button>
                                 </AnimateButton>
-                                <div style={{ margin: '0 16.5vw' }}></div>
+                                <div style={{ marginRight: '34vw' }}></div>
                                 <AnimateButton>
                                     <Button disabled={!isEditing} variant="contained" onClick={handleSave}>
                                         Save Changes

@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SimpleModal from 'views/forms/plugins/Modal/SimpleModal';
 import FriendsCard from 'ui-component/cards/FriendsCard';
+
 // material-ui
+import GlobalContext from 'contexts/GlobalContext';
 import { useTheme } from '@mui/material/styles';
 import {
     Avatar,
@@ -43,17 +45,14 @@ import useConfig from 'hooks/useConfig';
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
+    const { selectedEnterprise, setSelectedEnterprise, userProfile, setUserProfile, setSinglEntreprise } = useContext(GlobalContext);
     const theme = useTheme();
     const { borderRadius } = useConfig();
     const navigate = useNavigate();
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const { logout } = useAuth();
     const [open, setOpen] = useState(false);
-    const [doo, setDoo] = useState([]);
 
-    /**
-     * anchorRef is used on different components and specifying one type leads to other components throwing an error
-     * */
     const anchorRef = useRef(null);
     const handleLogout = async () => {
         try {
@@ -93,17 +92,12 @@ const ProfileSection = () => {
         prevOpen.current = open;
     }, [open]);
 
-    // ken ya3mel delete lel entreprise id1 bech tikrachi el fct(fasa5t'ha) eli lfou9...fix (fl back)updayti el entreprise id dynamically
-    // lien_logo mouch 9a3ed yetafficha w mouch 9a3ed yetb3ath lel back mel postman request ama ki nektbou fel pgadmin toul yetsayva ama
-    // me yetb3athch lel front (me toth'horch el attribut mta3ou jemla)
-
     useEffect(() => {
         axios
             .get('http://localhost:5000/entreprise/get_entreprise')
             .then((res) => {
-                console.log(res.data.entreprises);
-
-                setDoo(res.data.entreprises);
+                console.log('user profile', res.data.entreprises);
+                setUserProfile(res.data.entreprises);
             })
             .catch((err) => {
                 console.log(err);
@@ -181,13 +175,13 @@ const ProfileSection = () => {
                                         <Box sx={{ p: 2, pb: 0 }}>
                                             <Stack>
                                                 <Stack direction="row" spacing={0.5} alignItems="center">
-                                                    {doo && (
+                                                    {userProfile && (
                                                         <>
                                                             <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
                                                                 Bienvenue dans
                                                             </Typography>
                                                             <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                                {doo[0]?.nom}
+                                                                {userProfile[selectedEnterprise]?.nom}
                                                             </Typography>
                                                         </>
                                                     )}
@@ -212,13 +206,15 @@ const ProfileSection = () => {
                                                         my: 2
                                                     }}
                                                 >
-                                                    {doo &&
-                                                        doo.map((item, index) => {
+                                                    {userProfile &&
+                                                        userProfile.map((item, index) => {
                                                             return (
                                                                 <ListItemButton
                                                                     onClick={() => {
+                                                                        setSelectedEnterprise(index);
+                                                                        setSinglEntreprise(item);
                                                                         navigate('/user/account-profile/profile3/' + index);
-                                                                        window.location.reload(true);
+                                                                        // window.location.reload(true);
                                                                     }}
                                                                     key={index}
                                                                 >

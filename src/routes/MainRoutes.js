@@ -4,6 +4,10 @@ import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import AuthGuard from 'utils/route-guard/AuthGuard';
+import { Email } from '@mui/icons-material';
+import Emails from 'views/application/emails';
+import Facture from 'views/application/facture';
+import Entreprise from 'views/application/entreprise';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -35,6 +39,7 @@ const AppCustomerProductReview = Loadable(lazy(() => import('views/application/c
 
 // application routing
 const AppChat = Loadable(lazy(() => import('views/application/chat')));
+const AppContrat = Loadable(lazy(() => import('views/application/contrat')));
 const AppKanban = Loadable(lazy(() => import('views/application/kanban')));
 const AppKanbanBacklogs = Loadable(lazy(() => import('views/application/kanban/Backlogs')));
 const AppKanbanBoard = Loadable(lazy(() => import('views/application/kanban/Board')));
@@ -156,7 +161,7 @@ const MainRoutes = {
             element: <AppUserSocialProfile />
         },
         {
-            path: '/user/account-profile/profile3/:index', // zed fazet   /:index
+            path: '/user/account-profile/profile3/:index', // zeed    /:index
             element: <AppUserAccountProfile3 />
         },
 
@@ -205,7 +210,24 @@ const MainRoutes = {
             path: '/customer/product-review',
             element: <AppCustomerProductReview />
         },
-
+        // add selector for the "contrat" page in the sidebar -ahmed
+        {
+            path: '/app/contrat',
+            element: <AppContrat />
+        },
+        {
+            path: '/app/emails',
+            element: <Emails />
+        },
+        {
+            path: '/app/entreprises',
+            element: <Entreprise />
+        },
+        {
+            path: '/app/facture',
+            element: <Facture />
+        },
+        //
         {
             path: '/app/chat',
             element: <AppChat />
