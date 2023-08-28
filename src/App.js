@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 // routing
 import Routes from 'routes';
 
