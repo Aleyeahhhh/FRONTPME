@@ -7,20 +7,20 @@ import { useTheme } from '@mui/material/styles';
 import { Box, Grid, Tab, Tabs } from '@mui/material';
 
 // project imports
-import Profile from './Profile';
-import PersonalAccount from './PersonalAccount';
+// import Profile from './Profile';
+// import PersonalAccount from './PersonalAccount';
 import MyAccount from './MyAccount';
-import ChangePassword from './ChangePassword';
-import Settings from './Settings';
+// import ChangePassword from './ChangePassword';
+// import Settings from './Settings';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
 // assets
-import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
+// import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
-import LibraryBooksTwoToneIcon from '@mui/icons-material/LibraryBooksTwoTone';
-import LockTwoToneIcon from '@mui/icons-material/LockTwoTone';
-import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
+// import LibraryBooksTwoToneIcon from '@mui/icons-material/LibraryBooksTwoTone';
+// import LockTwoToneIcon from '@mui/icons-material/LockTwoTone';
+// import MailTwoToneIcon from '@mui/icons-material/MailTwoTone';
 
 // tabs panel
 function TabPanel({ children, value, index, ...other }) {
@@ -47,24 +47,8 @@ function a11yProps(index) {
 // tabs option
 const tabsOption = [
     {
-        label: 'Profile',
-        icon: <AccountCircleTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
-        label: 'Personal Details',
+        label: 'Details personnelle',
         icon: <DescriptionTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
-        label: 'My Account',
-        icon: <LibraryBooksTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
-        label: 'Change Password',
-        icon: <LockTwoToneIcon sx={{ fontSize: '1.3rem' }} />
-    },
-    {
-        label: 'Settings',
-        icon: <MailTwoToneIcon sx={{ fontSize: '1.3rem' }} />
     }
 ];
 
@@ -120,19 +104,7 @@ const Profile1 = () => {
                         ))}
                     </Tabs>
                     <TabPanel value={value} index={0}>
-                        <Profile />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <PersonalAccount />
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
                         <MyAccount />
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <ChangePassword />
-                    </TabPanel>
-                    <TabPanel value={value} index={4}>
-                        <Settings />
                     </TabPanel>
                 </Grid>
             </Grid>

@@ -15,17 +15,10 @@ const WidgetData = Loadable(lazy(() => import('views/widget/Data')));
 const WidgetChart = Loadable(lazy(() => import('views/widget/Chart')));
 
 // application - user social & account profile routing
-const AppUserSocialProfile = Loadable(lazy(() => import('views/application/users/social-profile')));
 const AppUserAccountProfile1 = Loadable(lazy(() => import('views/application/users/account-profile/Profile1')));
-const AppUserAccountProfile2 = Loadable(lazy(() => import('views/application/users/account-profile/Profile2')));
-const AppUserAccountProfile3 = Loadable(lazy(() => import('views/application/users/account-profile/Profile3')));
 
-// application - user cards & list variant routing
-const AppProfileCardStyle1 = Loadable(lazy(() => import('views/application/users/card/CardStyle1')));
-const AppProfileCardStyle2 = Loadable(lazy(() => import('views/application/users/card/CardStyle2')));
-const AppProfileCardStyle3 = Loadable(lazy(() => import('views/application/users/card/CardStyle3')));
+// application - user  list variant routing
 const AppProfileListStyle1 = Loadable(lazy(() => import('views/application/users/list/Style1')));
-const AppProfileListStyle2 = Loadable(lazy(() => import('views/application/users/list/Style2')));
 
 // application - customer routing
 const AppCustomerList = Loadable(lazy(() => import('views/application/customer/CustomerList')));
@@ -154,41 +147,13 @@ const MainRoutes = {
         },
 
         {
-            path: '/user/social-profile/:tab',
-            element: <AppUserSocialProfile />
-        },
-        {
-            path: '/user/account-profile/profile1',
+            path: '/user/account-profile/profile',
             element: <AppUserAccountProfile1 />
-        },
-        {
-            path: '/user/account-profile/profile2',
-            element: <AppUserAccountProfile2 />
-        },
-        {
-            path: '/user/account-profile/profile3',
-            element: <AppUserAccountProfile3 />
         },
 
         {
-            path: '/user/card/card1',
-            element: <AppProfileCardStyle1 />
-        },
-        {
-            path: '/user/card/card2',
-            element: <AppProfileCardStyle2 />
-        },
-        {
-            path: '/user/card/card3',
-            element: <AppProfileCardStyle3 />
-        },
-        {
-            path: '/user/list/list1',
+            path: '/user/list',
             element: <AppProfileListStyle1 />
-        },
-        {
-            path: '/user/list/list2',
-            element: <AppProfileListStyle2 />
         },
 
         {

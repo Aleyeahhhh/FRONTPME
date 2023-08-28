@@ -62,7 +62,7 @@ const JWTRegister = ({ ...others }) => {
             <Grid container direction="column" justifyContent="center" spacing={2}>
                 <Grid item xs={12} container alignItems="center" justifyContent="center">
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1">Sign up with Email address</Typography>
+                        <Typography variant="subtitle1">Inscription avec une adresse e-mail</Typography>
                     </Box>
                 </Grid>
             </Grid>
@@ -77,10 +77,10 @@ const JWTRegister = ({ ...others }) => {
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    nom: Yup.string().required('Last Name is required'),
-                    prenom: Yup.string().required('First Name is required'),
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    description: Yup.string().required('Description is required')
+                    nom: Yup.string().required('Nom *'),
+                    prenom: Yup.string().required('Prénom *'),
+                    email: Yup.string().email('Doit être un e-mail valide').max(255).required('Email *'),
+                    description: Yup.string().required('Description *')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
@@ -128,7 +128,7 @@ const JWTRegister = ({ ...others }) => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="First Name"
+                                    label="Prénom"
                                     margin="normal"
                                     name="prenom"
                                     type="text"
@@ -142,7 +142,7 @@ const JWTRegister = ({ ...others }) => {
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="Last Name"
+                                    label="Nom"
                                     margin="normal"
                                     name="nom"
                                     type="text"
@@ -182,7 +182,7 @@ const JWTRegister = ({ ...others }) => {
                             </FormHelperText>
                         )}
                         <FormControl fullWidth error={Boolean(touched.email && errors.email)}>
-                            <InputLabel htmlFor="outlined-adornment-email-register">Email Address </InputLabel>
+                            <InputLabel htmlFor="outlined-adornment-email-register">Adresse e-mail </InputLabel>
                             <OutlinedInput
                                 id="outlined-adornment-email-register"
                                 type="email"
@@ -251,9 +251,9 @@ const JWTRegister = ({ ...others }) => {
                                     }
                                     label={
                                         <Typography variant="subtitle1">
-                                            Agree with &nbsp;
+                                            Accepter &nbsp;
                                             <Typography variant="subtitle1" component={Link} to="#">
-                                                Terms & Condition.
+                                                Termes et conditions.
                                             </Typography>
                                         </Typography>
                                     }
@@ -278,7 +278,7 @@ const JWTRegister = ({ ...others }) => {
                                     color="secondary"
                                     onClick={() => setIsSuccess(true)}
                                 >
-                                    Sign up
+                                    Ajouter utilisateur
                                 </Button>
                             </AnimateButton>
                         </Box>

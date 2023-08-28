@@ -10,7 +10,7 @@ import AuthCardWrapper from '../AuthCardWrapper';
 import Logo from 'ui-component/Logo';
 import AuthResetPassword from '../auth-forms/AuthResetPassword';
 import AuthFooter from 'ui-component/cards/AuthFooter';
-
+// import useAuth from 'hooks/useAuth';
 // assets
 
 // ============================|| AUTH3 - RESET PASSWORD ||============================ //
@@ -18,7 +18,7 @@ import AuthFooter from 'ui-component/cards/AuthFooter';
 const ResetPassword = () => {
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-
+    // const { isLoggedIn } = useAuth();
     return (
         <AuthWrapper1>
             <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: '100vh' }}>
@@ -46,14 +46,14 @@ const ResetPassword = () => {
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
                                                     >
-                                                        Reset Password
+                                                        Rréinitialiser mot de passe
                                                     </Typography>
                                                     <Typography
                                                         variant="caption"
                                                         fontSize="16px"
                                                         textAlign={matchDownSM ? 'center' : 'inherit'}
                                                     >
-                                                        Please choose your new password
+                                                        Veuillez choisir votre nouveau mot de passe
                                                     </Typography>
                                                 </Stack>
                                             </Grid>

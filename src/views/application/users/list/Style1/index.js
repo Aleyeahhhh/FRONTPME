@@ -8,7 +8,7 @@ import { Button, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination
 import UserList from './UserList';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-
+import UserAdd from './UserAdd';
 // assets
 import { IconSearch } from '@tabler/icons';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
@@ -30,7 +30,7 @@ const ListStylePage1 = () => {
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">List</Typography>
+                        <Typography variant="h3">Liste des utilisateurs</Typography>
                     </Grid>
                     <Grid item>
                         <OutlinedInput
@@ -48,6 +48,9 @@ const ListStylePage1 = () => {
             }
             content={false}
         >
+            <Grid item>
+                <UserAdd />
+            </Grid>
             <UserList />
             <Grid item xs={12} sx={{ p: 3 }}>
                 <Grid container justifyContent="space-between" spacing={gridSpacing}>
@@ -62,7 +65,7 @@ const ListStylePage1 = () => {
                             endIcon={<ExpandMoreRoundedIcon />}
                             onClick={handleClick}
                         >
-                            10 Rows
+                            10 Lignes
                         </Button>
                         {anchorEl && (
                             <Menu
@@ -81,9 +84,9 @@ const ListStylePage1 = () => {
                                     horizontal: 'right'
                                 }}
                             >
-                                <MenuItem onClick={handleClose}> 10 Rows</MenuItem>
-                                <MenuItem onClick={handleClose}> 20 Rows</MenuItem>
-                                <MenuItem onClick={handleClose}> 30 Rows </MenuItem>
+                                <MenuItem onClick={handleClose}> 10 Lignes</MenuItem>
+                                <MenuItem onClick={handleClose}> 20 Lignes</MenuItem>
+                                <MenuItem onClick={handleClose}> 30 Lignes </MenuItem>
                             </Menu>
                         )}
                     </Grid>

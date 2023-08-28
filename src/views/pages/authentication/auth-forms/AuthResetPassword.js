@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -36,13 +36,17 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // ========================|| FIREBASE - RESET PASSWORD ||======================== //
 
 const AuthResetPassword = ({ ...others }) => {
+    const [isSuccess, setIsSuccess] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
     const scriptedRef = useScriptRef();
     const [showPassword, setShowPassword] = React.useState(false);
     const [strength, setStrength] = React.useState(0);
     const [level, setLevel] = React.useState();
-
+    // const location = useLocation();
+    // // Extract resetToken from URL parameters
+    // const searchParams = new URLSearchParams(location.search);
+    // const resetToken = searchParams.get('resetToken');
     const { isLoggedIn } = useAuth();
 
     const handleClickShowPassword = () => {
@@ -58,6 +62,10 @@ const AuthResetPassword = ({ ...others }) => {
         setStrength(temp);
         setLevel(strengthColor(temp));
     };
+    // lazmni njib el resettoken mel base
+
+    const [resetPassword, setresetPassword] = useState('');
+    const resetToken = localStorage.getItem('resetToken');
 
     useEffect(() => {
         changePassword('');
@@ -71,12 +79,12 @@ const AuthResetPassword = ({ ...others }) => {
                 submit: null
             }}
             validationSchema={Yup.object().shape({
-                password: Yup.string().max(255).required('Password is required'),
+                password: Yup.string().max(255).required('Mot de passe *'),
                 confirmPassword: Yup.string()
-                    .required('Confirm Password is required')
+                    .required('Confirmé mot de passe *')
                     .test(
                         'confirmPassword',
-                        'Both Password must be match!',
+                        'Deux mots de passe doivent correspondre !',
                         (confirmPassword, yup) => yup.parent.password === confirmPassword
                     )
             })}
@@ -84,24 +92,64 @@ const AuthResetPassword = ({ ...others }) => {
                 try {
                     // password reset
                     if (scriptedRef.current) {
+                        console.log('1');
                         setStatus({ success: true });
                         setSubmitting(false);
+                        if (isSuccess) {
+                            setresetPassword(resetToken);
+                            console.log('2');
+                            try {
+                                console.log('3');
+                                console.log('Password:', values.password);
+                                console.log('resetToken:', resetPassword);
+                                const response = await axios.post(
+                                    'http://127.0.0.1:5000/users/reset_password',
+                                    {
+                                        password: values.password
+                                    },
+                                    {
+                                        headers: { resetToken: resetPassword }
+                                    }
+                                );
 
-                        dispatch(
-                            openSnackbar({
-                                open: true,
-                                message: 'Successfuly reset password.',
-                                variant: 'alert',
-                                alert: {
-                                    color: 'success'
-                                },
-                                close: false
-                            })
-                        );
-
-                        setTimeout(() => {
-                            navigate(isLoggedIn ? '/auth/login' : '/login', { replace: true });
-                        }, 1500);
+                                if (response.ok) {
+                                    dispatch(
+                                        openSnackbar({
+                                            open: true,
+                                            message: 'Successfuly reset password.',
+                                            variant: 'alert',
+                                            alert: {
+                                                color: 'success'
+                                            },
+                                            close: false
+                                        })
+                                    );
+                                    setTimeout(() => {
+                                        navigate(isLoggedIn ? '/auth/login' : '/login', { replace: true });
+                                    }, 1500);
+                                    // Handle success
+                                } else {
+                                    dispatch(
+                                        openSnackbar({
+                                            open: true,
+                                            message: ' mot de passe réinitialisé avec succès.',
+                                            variant: 'alert',
+                                            alert: {
+                                                color: 'success'
+                                            },
+                                            close: false
+                                        })
+                                    );
+                                    setTimeout(() => {
+                                        navigate(isLoggedIn ? '/auth/login' : '/login', { replace: true });
+                                    }, 1500);
+                                    // Handle error
+                                    console.error('Failed ');
+                                }
+                            } catch (error) {
+                                console.error('Error sending request:', error);
+                            }
+                        }
                     }
                 } catch (err) {
                     console.error(err);
@@ -116,7 +164,7 @@ const AuthResetPassword = ({ ...others }) => {
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
                     <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-password-reset">Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-password-reset">Mot de passe</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password-reset"
                             type={showPassword ? 'text' : 'password'}
@@ -173,13 +221,12 @@ const AuthResetPassword = ({ ...others }) => {
                             </Box>
                         </FormControl>
                     )}
-
                     <FormControl
                         fullWidth
                         error={Boolean(touched.confirmPassword && errors.confirmPassword)}
                         sx={{ ...theme.typography.customInput }}
                     >
-                        <InputLabel htmlFor="outlined-adornment-confirm-password">Confirm Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-confirm-password">Confirmez mot de passe</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-confirm-password"
                             type="password"
@@ -216,8 +263,11 @@ const AuthResetPassword = ({ ...others }) => {
                                 type="submit"
                                 variant="contained"
                                 color="secondary"
+                                onClick={() => setIsSuccess(true)}
+                                // component={Link}
+                                // to={isLoggedIn ? '/pages/login/login3' : '/login'}
                             >
-                                Reset Password
+                                réinitialiser mot de passe
                             </Button>
                         </AnimateButton>
                     </Box>

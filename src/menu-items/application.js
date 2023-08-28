@@ -31,111 +31,16 @@ const application = {
             icon: icons.IconUserCheck,
             children: [
                 {
-                    id: 'posts',
-                    title: <FormattedMessage id="social-profile" />,
-                    type: 'item',
-                    url: '/user/social-profile/posts'
-                },
-                {
                     id: 'account-profile',
                     title: <FormattedMessage id="account-profile" />,
-                    type: 'collapse',
-                    children: [
-                        {
-                            id: 'profile1',
-                            title: (
-                                <>
-                                    <FormattedMessage id="profile" /> 01
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/account-profile/profile1'
-                        },
-                        {
-                            id: 'profile2',
-                            title: (
-                                <>
-                                    <FormattedMessage id="profile" /> 02
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/account-profile/profile2'
-                        },
-                        {
-                            id: 'profile3',
-                            title: (
-                                <>
-                                    <FormattedMessage id="profile" /> 03
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/account-profile/profile3'
-                        }
-                    ]
-                },
-                {
-                    id: 'user-card',
-                    title: <FormattedMessage id="cards" />,
-                    type: 'collapse',
-                    children: [
-                        {
-                            id: 'card1',
-                            title: (
-                                <>
-                                    <FormattedMessage id="style" /> 01
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/card/card1'
-                        },
-                        {
-                            id: 'card2',
-                            title: (
-                                <>
-                                    <FormattedMessage id="style" /> 02
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/card/card2'
-                        },
-                        {
-                            id: 'card3',
-                            title: (
-                                <>
-                                    <FormattedMessage id="style" /> 03
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/card/card3'
-                        }
-                    ]
+                    type: 'item',
+                    url: '/user/account-profile/profile'
                 },
                 {
                     id: 'user-list',
                     title: <FormattedMessage id="list" />,
-                    type: 'collapse',
-                    children: [
-                        {
-                            id: 'list1',
-                            title: (
-                                <>
-                                    <FormattedMessage id="style" /> 01
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/list/list1'
-                        },
-                        {
-                            id: 'list2',
-                            title: (
-                                <>
-                                    <FormattedMessage id="style" /> 02
-                                </>
-                            ),
-                            type: 'item',
-                            url: '/user/list/list2'
-                        }
-                    ]
+                    type: 'item',
+                    url: '/user/list'
                 }
             ]
         },

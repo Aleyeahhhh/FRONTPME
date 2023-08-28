@@ -7,9 +7,9 @@ import { useTheme } from '@mui/material/styles';
 import {
     Box,
     Button,
-    Checkbox,
+    // Checkbox,
     FormControl,
-    FormControlLabel,
+    // FormControlLabel,
     FormHelperText,
     Grid,
     IconButton,
@@ -36,23 +36,27 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const JWTLogin = ({ loginProp, ...others }) => {
     const [isSuccess, setIsSuccess] = useState(false);
-
     const theme = useTheme();
 
     const { login } = useAuth();
     const scriptedRef = useScriptRef();
 
-    const [checked, setChecked] = React.useState(true);
+    // const [checked, setChecked] = React.useState(true);
 
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
     };
-
+    const [accessToken, setAccessToken] = useState('');
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-
+    // const isAuthenticated = localStorage.getItem('access_token');
+    // const headers = {
+    //     Authorization: `Bearer ${isAuthenticated}`
+    // };
+    // const [accesstoken, setaccesstoken] = useState('');
+    // const accessToken = localStorage.getItem('accessToken');
     return (
         <Formik
             initialValues={{
@@ -61,8 +65,8 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 submit: null
             }}
             validationSchema={Yup.object().shape({
-                email: Yup.string().required('Email is required'),
-                password: Yup.string().required('Password is required')
+                email: Yup.string().required('Adresse e-mail est obligatoire'),
+                password: Yup.string().required('Mot de passe est obligatoire')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
@@ -70,18 +74,30 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     await login(values.email, values.password);
 
                     if (scriptedRef.current) {
+                        console.log('1');
                         setStatus({ success: true });
                         setSubmitting(false);
                         if (isSuccess) {
+                            // setaccesstoken(accessToken);
+                            console.log('2');
                             // Send POST request to the backend API
                             axios
-                                .post('http://127.0.0.1:5000/users/login', {
-                                    email: values.email,
-                                    password: values.password // Send plain text password
-                                })
+                                .post(
+                                    'http://127.0.0.1:5000/users/login',
+                                    {
+                                        email: values.email,
+                                        password: values.password // Send plain text password
+                                    },
+                                    { headers: { accessToken: accessToken } }
+                                )
                                 .then((response) => {
                                     if (response.status === 200) {
                                         // Handle success
+                                        const receivedAccessToken = response.data.access_token;
+                                        localStorage.setItem('accessToken', receivedAccessToken);
+                                        setAccessToken(receivedAccessToken); // Update the accessToken state
+                                        console.log('User login successful');
+                                        console.log('3');
                                         console.log('User login successful');
                                     } else {
                                         // Handle error
@@ -108,7 +124,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                 <form noValidate onSubmit={handleSubmit} {...others}>
                     <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-email-login">Email Address </InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-email-login">Adresse e-mail </InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-email-login"
                             type="email"
@@ -126,7 +142,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     </FormControl>
 
                     <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                        <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
+                        <InputLabel htmlFor="outlined-adornment-password-login">Mot de passe</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password-login"
                             type={showPassword ? 'text' : 'password'}
@@ -159,19 +175,6 @@ const JWTLogin = ({ loginProp, ...others }) => {
 
                     <Grid container alignItems="center" justifyContent="space-between">
                         <Grid item>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={checked}
-                                        onChange={(event) => setChecked(event.target.checked)}
-                                        name="checked"
-                                        color="primary"
-                                    />
-                                }
-                                label="Keep me logged in"
-                            />
-                        </Grid>
-                        <Grid item>
                             <Typography
                                 variant="subtitle1"
                                 component={Link}
@@ -183,7 +186,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                 color="secondary"
                                 sx={{ textDecoration: 'none' }}
                             >
-                                Forgot Password?
+                                Mot de passe oublié?
                             </Typography>
                         </Grid>
                     </Grid>
@@ -204,7 +207,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                 type="submit"
                                 variant="contained"
                             >
-                                Sign In
+                                Se connecter
                             </Button>
                         </AnimateButton>
                     </Box>

@@ -150,15 +150,15 @@ export default slice.reducer;
 export function getUsersListStyle1() {
     return async () => {
         try {
-            const response = await axios.get('/api/user-list/s1/list');
-            dispatch(slice.actions.getUsersListStyle1Success(response.data.users_s1));
+            const response = await axios.get('http://127.0.0.1:5000/users/getusers');
+            dispatch(slice.actions.getUsersListStyle1Success(response.data.users));
         } catch (error) {
             dispatch(slice.actions.hasError(error));
         }
     };
 }
 
-export function getUsersListStyle2() {
+export function getEntreprisesListStyle2() {
     return async () => {
         try {
             const response = await axios.get('/api/user-list/s2/list');
