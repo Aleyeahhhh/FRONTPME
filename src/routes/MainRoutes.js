@@ -28,12 +28,12 @@ const AppUserSocialProfile = Loadable(
   lazy(() => import("views/application/users/social-profile"))
 );
 
-const AppUserAccountProfile1 = Loadable(
-  lazy(() => import("views/application/users/account-profile/Profile1"))
-);
-const AppUserAccountProfile2 = Loadable(
-  lazy(() => import("views/application/users/account-profile/Profile2"))
-);
+// const AppUserAccountProfile1 = Loadable(
+//   lazy(() => import("views/application/users/account-profile/Profile1"))
+// );
+// const AppUserAccountProfile2 = Loadable(
+//   lazy(() => import("views/application/users/account-profile/Profile2"))
+// );
 const AppUserAccountProfile3 = Loadable(
   lazy(() => import("views/application/users/account-profile/Profile3"))
 );
@@ -82,8 +82,8 @@ const AppKanbanBacklogs = Loadable(
   lazy(() => import("views/application/kanban/Backlogs"))
 );
 const Facture = Loadable(lazy(() => import("views/application/facture")));
-const contrat = Loadable(lazy(() => import("views/application/contrat")));
-const client = Loadable(lazy(() => import("views/application/client")));
+// const contrat = Loadable(lazy(() => import("views/application/contrat")));
+// const client = Loadable(lazy(() => import("views/application/client")));
 const AppKanbanBoard = Loadable(
   lazy(() => import("views/application/kanban/Board"))
 );
@@ -305,14 +305,14 @@ const MainRoutes = {
       path: "/user/social-profile/:tab",
       element: <AppUserSocialProfile />,
     },
-    {
-      path: "/user/account-profile/profile1",
-      element: <AppUserAccountProfile1 />,
-    },
-    {
-      path: "/user/account-profile/profile2",
-      element: <AppUserAccountProfile2 />,
-    },
+    // {
+    //   path: "/user/account-profile/profile1",
+    //   element: <AppUserAccountProfile1 />,
+    // },
+    // {
+    //   path: "/user/account-profile/profile2",
+    //   element: <AppUserAccountProfile2 />,
+    // },
     {
       path: "/user/account-profile/profile3",
       element: <AppUserAccountProfile3 />,
