@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -7,18 +7,21 @@ import { Button, Grid, InputAdornment, Menu, MenuItem, OutlinedInput, Pagination
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
+import GlobalContext from 'contexts/GlobalContext';
 
 // assets
 import { IconSearch } from '@tabler/icons';
-import AfficherContrats from './AfficherContrats';
-import AjoutContrat from './AjoutContrat';
+import AfficherEntreprise from './AfficherEntreprise';
+import AjouterEntreprise from './AjouterEntreprise';
+// ==============================|| USER LIST STYLE 1 ||============================== //
 
-const Contrat = () => {
-    const theme = useTheme();
-    const [data, setData] = useState([]);
+const Entreprise = () => {
+    const { userProfile } = useContext(GlobalContext);
+
+    // const theme = useTheme();
     // const [anchorEl, setAnchorEl] = useState(null);
-    const [page, setPage] = useState(1);
-    const rowsPerPage = 10;
+    // const [page, setPage] = useState(1);
+    // const rowsPerPage = 10;
     // const handleClick = (event) => {
     //     setAnchorEl(event.currentTarget);
     // };
@@ -27,23 +30,26 @@ const Contrat = () => {
     //     setAnchorEl(null);
     // };
 
-    useEffect(() => {
-        axios
-            .get('http://localhost:5000/contract/get_contract')
-            .then((res) => {
-                console.log(res.data.contracts);
-                setData(res.data.contracts);
-            })
-            .catch((err) => {
-                console.log('err', err);
-            });
-    }, []);
+    // useEffect(() => {
+    //     axios
+    //         .get('http://localhost:5000/entreprise/get_entreprise')
+    //         .then((res) => {
+    //             console.log(res.data.entreprises);
+    //             setData(res.data.entreprises);
+    //         })
+    //         .catch((err) => {
+    //             console.log('err', err);
+    //         });
+    // }, []);
+    // useEffect(() => {
+    //     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa', data);
+    // }, [data]);
     return (
         <MainCard
             title={
                 <Grid container alignItems="center" justifyContent="space-between" spacing={gridSpacing}>
                     <Grid item>
-                        <Typography variant="h3">Contrats en Cours</Typography>
+                        <Typography variant="h3">Entreprises crée</Typography>
                     </Grid>
                     <Grid item>
                         <OutlinedInput
@@ -61,19 +67,20 @@ const Contrat = () => {
             }
             content={false}
         >
-            <AfficherContrats contracts={data} page={page} rowsPerPage={rowsPerPage} />
+            {/*  entreprises={data} page={page} rowsPerPage={rowsPerPage}  */}
+            <AfficherEntreprise />
             <Grid item xs={12} sx={{ p: 3 }}>
                 <Grid container justifyContent="space-between" spacing={gridSpacing}>
-                    <Grid item>
+                    {/* <Grid item>
                         <Pagination
                             count={Math.ceil(data.length / rowsPerPage)}
                             color="primary"
                             page={page}
-                            onChange={(value) => setPage(value)}
+                            onChange={(event, value) => setPage(value)}
                         />
-                    </Grid>
+                    </Grid> */}
                     <Grid item>
-                        <AjoutContrat />
+                        <AjouterEntreprise />
                     </Grid>
                 </Grid>
             </Grid>
@@ -81,4 +88,4 @@ const Contrat = () => {
     );
 };
 
-export default Contrat;
+export default Entreprise;

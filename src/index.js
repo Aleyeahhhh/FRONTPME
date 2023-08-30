@@ -11,7 +11,7 @@ import { store, persister } from 'store';
 import * as serviceWorker from 'serviceWorker';
 import reportWebVitals from 'reportWebVitals';
 import { ConfigProvider } from 'contexts/ConfigContext';
-
+import AppProvider from './contexts/AppContext';
 // style + assets
 import 'assets/scss/style.scss';
 
@@ -24,7 +24,9 @@ root.render(
         <PersistGate loading={null} persistor={persister}>
             <ConfigProvider>
                 <BrowserRouter basename={process.env.REACT_APP_BASE_NAME}>
-                    <App />
+                    <AppProvider>
+                        <App />
+                    </AppProvider>
                 </BrowserRouter>
             </ConfigProvider>
         </PersistGate>

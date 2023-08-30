@@ -45,13 +45,14 @@ const simpleCard = {
     name: 'Joanne',
     status: 'Active'
 };
-
+//
 const friend = {
     id: '#4Friends_Henderson',
     avatar: 'avatar-4.png',
     name: 'Henderson',
     location: 'South Antonina'
 };
+//
 
 const follower = {
     id: '#4Followers_Henderson',
@@ -80,11 +81,13 @@ const UICards = () => {
                             <UserSimpleCard {...simpleCard} />
                         </SubCard>
                     </Grid>
+                    {/*  */}
                     <Grid item xs={12} lg={4}>
                         <SubCard title="Basic Card Style 4">
                             <FriendsCard {...friend} />
                         </SubCard>
                     </Grid>
+                    {/*  */}
                     <Grid item xs={12} lg={4}>
                         <SubCard title="Basic Card Style 5">
                             <FollowerCard {...follower} />
