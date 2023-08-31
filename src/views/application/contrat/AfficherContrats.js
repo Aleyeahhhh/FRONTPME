@@ -97,9 +97,6 @@ const AfficherContrats = ({ contracts, page, rowsPerPage }) => {
                         <TableCell>Prochaine action</TableCell>
                         <TableCell>Date prochaine action</TableCell>
                         <TableCell>Date rappele negociation</TableCell>
-                        <TableCell align="center" sx={{ pr: 3 }}>
-                            Actions
-                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -120,28 +117,6 @@ const AfficherContrats = ({ contracts, page, rowsPerPage }) => {
                                                 <TableCell>{row.prochaine_action}</TableCell>
                                                 <TableCell>{row.date_prochaine_action}</TableCell>
                                                 <TableCell>{row.date_rappel}</TableCell>
-                                                <TableCell align="center" sx={{ pr: 3 }}>
-                                                    <Stack direction="row" justifyContent="center" alignItems="center">
-                                                        <Tooltip placement="top" title="Message">
-                                                            <IconButton color="primary" aria-label="delete" size="large">
-                                                                <ChatBubbleTwoToneIcon sx={{ fontSize: '1.1rem' }} />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                        <Tooltip placement="top" title="Block">
-                                                            <IconButton
-                                                                color="primary"
-                                                                sx={{
-                                                                    color: theme.palette.orange.dark,
-                                                                    borderColor: theme.palette.orange.main,
-                                                                    '&:hover ': { background: theme.palette.orange.light }
-                                                                }}
-                                                                size="large"
-                                                            >
-                                                                <BlockTwoToneIcon sx={{ fontSize: '1.1rem' }} />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </Stack>
-                                                </TableCell>
                                             </>
                                         )}
                                     </TableRow>

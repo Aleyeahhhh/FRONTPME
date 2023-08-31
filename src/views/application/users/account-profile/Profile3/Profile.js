@@ -75,7 +75,7 @@ const Profile = () => {
 
     const handleSave = () => {
         axios
-            .put('http://localhost:5000/entreprise/update/' + selectedEnterprise, modifyentreprise)
+            .put('http://localhost:5000/entreprise/update/' + singlEntreprise.id_Entreprise, modifyentreprise)
             .then((res) => {
                 console.log(res.data);
                 setIsEditing(false);
@@ -310,7 +310,7 @@ const Profile = () => {
                 {/* adding some spacing here */}
                 <div style={{ height: '2.8vh' }}></div>
                 {/*  -  */}
-                <SubCard>
+                {/* <SubCard>
                     <div
                         style={{
                             display: 'flex',
@@ -339,7 +339,7 @@ const Profile = () => {
                             </Button>
                         </AnimateButton>
                     </div>
-                </SubCard>
+                </SubCard> */}
             </Grid>
             <Grid item sm={6} md={8}>
                 <SubCard title="Modifier Les Détails De l'entreprise">
