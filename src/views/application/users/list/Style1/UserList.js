@@ -209,27 +209,33 @@ const UserList = () => {
             });
     };
 
-    const handleChangeCheckbox = (e, user) => {
+    const [entArray, setentArray] = useState([]);
+
+    const handleChangeCheckbox = (e) => {
         const { value } = e.target;
-        console.log('checking the value', value, user);
+        setentArray((prevSelectedValues) => {
+            if (prevSelectedValues.includes(value)) {
+                // If it's already in the array, remove it
+                return prevSelectedValues.filter((item) => item !== value);
+            } else {
+                // If it's not in the array, add it
+                return [...prevSelectedValues, value];
+            }
+        });
+    };
 
-        // if (checked) {
-        //     setSelectedValues((prevValues) => [...prevValues, value]);
-        // } else {
-        //     setSelectedValues((prevValues) => prevValues.filter((val) => val !== value));
-        // }
-
-        // const selectedEnterprisesArray = selectedValues.map(Number);
-
+    const handleaffect = (user) => {
+        console.log('hello', entArray);
         const requestData = {
             id_user: user,
-            enterprises: [value]
+            enterprises: entArray
         };
         console.log('requesting data', requestData);
         axios
             .post('http://127.0.0.1:5000/users/assign_user_to_enterprises', requestData)
             .then((res) => {
                 console.log(res.data);
+                setOpenn(false);
             })
             .catch((err) => {
                 console.log('error', err);
@@ -362,7 +368,17 @@ const UserList = () => {
                                     })}
                                 </Grid>
                             </SubCard>
+                            <Divider />
                         </Grid>
+                        <CardActions>
+                            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                                <AnimateButton>
+                                    <Button onClick={() => handleaffect(UserSelected)} variant="outlined">
+                                        Affecter
+                                    </Button>
+                                </AnimateButton>
+                            </Grid>
+                        </CardActions>
                     </MainCard>
                 </div>
             </Modal>
@@ -374,6 +390,7 @@ const UserList = () => {
                         <TableCell>Prénom</TableCell>
                         <TableCell>Adresse E-mail</TableCell>
                         <TableCell>Profile</TableCell>
+                        <TableCell>Entreprises</TableCell>
                         <TableCell align="center" sx={{ pr: 3 }}>
                             Actions
                         </TableCell>
@@ -397,13 +414,27 @@ const UserList = () => {
                                 <TableCell>{row?.email}</TableCell>
                                 <TableCell>
                                     <span
-                                        className={`badge ${
-                                            row.profile_id === 1 ? 'bg-info text-dark' : row.profile_id === 2 ? 'bg-warning text-dark' : ''
-                                        } text-dark`}
+                                        className="badge"
+                                        style={{
+                                            backgroundColor:
+                                                row.profile_id === 1
+                                                    ? theme.palette.success.main
+                                                    : row.profile_id === 2
+                                                    ? theme.palette.warning.main
+                                                    : '',
+                                            color: theme.palette.text.primary,
+                                            padding: '0.2rem 0.5rem',
+                                            borderRadius: '4px',
+                                            display: 'inline-block'
+                                        }}
                                     >
-                                        {' '}
                                         {profileMap[row?.profile_id]}
                                     </span>
+                                </TableCell>
+                                <TableCell>
+                                    {row?.entreprises.map((entreprise, index) => (
+                                        <div key={index}>{entreprise.nom}</div>
+                                    ))}
                                 </TableCell>
                                 <TableCell align="center" sx={{ pr: 3 }}>
                                     <Stack direction="row" justifyContent="center" alignItems="center">
